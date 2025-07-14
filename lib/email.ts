@@ -1,36 +1,36 @@
 import nodemailer from 'nodemailer'
 import { EmailData } from '@/types/donation'
 
-const transporter = nodemailer.createTransporter({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT || '587'),
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 })
 
 export async function sendEmail(emailData: EmailData) {
-    try {
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: emailData.to,
-            subject: emailData.subject,
-            html: emailData.html,
-            attachments: emailData.attachments,
-        }
-
-        const result = await transporter.sendMail(mailOptions)
-        return { success: true, messageId: result.messageId }
-    } catch (error) {
-        console.error('Email sending failed:', error)
-        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailData.html,
+      attachments: emailData.attachments,
     }
+
+    const result = await transporter.sendMail(mailOptions)
+    return { success: true, messageId: result.messageId }
+  } catch (error) {
+    console.error('Email sending failed:', error)
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
 }
 
 export function generateReceiptHtml(donationData: any) {
-    return `
+  return `
     <!DOCTYPE html>
     <html>
     <head>
